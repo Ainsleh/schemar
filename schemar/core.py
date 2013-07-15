@@ -1,7 +1,7 @@
 from pyparsing import *
-from .models import (Table, Relation, AttributeAlias)
-from .grammar import *
-from .generators.mysql import MysqlGenerator
+from schemar.models import (Table, Relation, AttributeAlias)
+from schemar.grammar import *
+from schemar.generators.mysql import MysqlGenerator
 from collections import OrderedDict
 
 
