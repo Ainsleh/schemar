@@ -1,11 +1,13 @@
+from collections import OrderedDict
+
 class Table:
     def __init__(self, name):
         self.name = name
-        self.columns = {}
-        self.relations = {}
+        self.columns = OrderedDict()
+        self.relations = OrderedDict()
 
-        self.relation_attributes = {}
-        self.foreign_keys = {}
+        self.relation_attributes = OrderedDict()
+        self.foreign_keys = OrderedDict()
         self.primary_keys = set()
 
     def add_column(self, name, data_type):
@@ -47,7 +49,7 @@ class Table:
         self.foreign_keys = {}
 
     def generate_junction_tables(self):
-        junction_tables = set()
+        junction_tables = OrderedDict()
 
         for relation in self.get_relations():
             dest_table = relation.dest_table
@@ -63,7 +65,7 @@ class Table:
                 junction_table.add_relation(Relation.HAS_ONE, self)
                 junction_table.add_relation(Relation.HAS_ONE, dest_table)
 
-                junction_tables.add(junction_table)
+                junction_tables[table_name] = junction_table
 
         return junction_tables
 
