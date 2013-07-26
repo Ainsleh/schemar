@@ -1,18 +1,18 @@
 CREATE TABLE `author` (
-	 `name` varchar(128),
 	 `id` int(11) AUTO_INCREMENT,
+	 `name` varchar(128),
 	 PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE `book` (
+	 `id` int(11) AUTO_INCREMENT,
 	 `title` varchar(128),
 	 `ISBN` int(11),
-	 `id` int(11) AUTO_INCREMENT,
 	 `publisher_id` int(11),
 	 PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE `publisher` (
-	 `name` varchar(128),
 	 `id` int(11) AUTO_INCREMENT,
+	 `name` varchar(128),
 	 PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE TABLE `author_book_link` (

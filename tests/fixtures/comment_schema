@@ -1,7 +1,7 @@
 CREATE TABLE `comment` (
+	 `id` int(11) AUTO_INCREMENT,
 	 `author` varchar(128),
 	 `body` varchar(128),
-	 `id` int(11) AUTO_INCREMENT,
 	 `parent_id` int(11),
 	 PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -10,8 +10,9 @@ class Table:
         self.foreign_keys = OrderedDict()
         self.primary_keys = set()
 
-    def add_column(self, name, data_type):
+    def add_column(self, name, data_type, last=True):
         self.columns[name] = Column(name, data_type)
+        self.columns.move_to_end(name, last)
 
     def add_relation(self, type, dest_table, alias=None):
         self.relations[dest_table] = Relation(type, dest_table, alias)

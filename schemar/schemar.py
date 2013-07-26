@@ -33,7 +33,7 @@ class Schemar:
 
         for _, table in self.schema.items():
             #Add "id" as primary key to defined tables
-            table.add_column("id", AttributeAlias("auto"))
+            table.add_column("id", AttributeAlias("auto"), False)
             table.add_primary_key("id")
 
             jct_tables = table.generate_junction_tables()
