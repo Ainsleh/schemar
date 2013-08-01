@@ -55,19 +55,3 @@ class Schemar:
         schema_output.append('\n'.join(constraint_output))
 
         return '\n'.join(schema_output)
-
-    def get_table_columns(self, *tables):
-        for table in tables:
-            print("Defining attributes for table: {0}".format(table.name))
-            while True:
-                try:
-                    input_str = input("\t-> ")
-                    if input_str == "":
-                        break
-                    else:
-                        name, data_type = column_def_grammar.parseString(input_str)
-
-                        table.add_column(name, data_type)
-
-                except ParseException:
-                    print("Incorrect attribute definition. Try format \"<name> <data_type>\"")

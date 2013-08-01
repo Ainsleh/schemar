@@ -77,7 +77,7 @@ class Table:
         return hash(self.name)
 
     def __str__(self):
-        return "Table('%s') \n Columns: %s" % (self.name, "\n".join(self.columns))
+        return "Table('%s') \n Columns: \n %s" % (self.name, "\n".join(self.columns))
 
     def __repr__(self):
         return self.__str__()
