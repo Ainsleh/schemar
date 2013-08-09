@@ -22,7 +22,6 @@ class Schemar:
         return table_list
 
     def define_relationship(self, source_table, dest_table, type, alias=None):
-        self.define_table(source_table, dest_table)
         self.schema[source_table].add_relation(type, self.schema[dest_table], alias)
 
     def commit(self):

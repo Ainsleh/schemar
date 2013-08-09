@@ -2,17 +2,27 @@ from pyparsing import ParseException
 from schemar.models import Relation
 from schemar.grammar import *
 from schemar.schemar import Schemar
+import argparse
 
 def main():
+    parser = argparse.ArgumentParser(description='A CLI Tool to generate SQL schemas quickly')
+    parser.add_argument('output_file', metavar='filename',
+                   help='The file to which the generated SQL schema will be written')
+    args = parser.parse_args()
+
     schemar = Schemar()
+
+    def define_relationship(source_table, dest_table, type, alias):
+        get_table_columns(*schemar.define_table(source_table, dest_table))
+        schemar.define_relationship(source_table, dest_table, type, alias)
 
     def define_has_one(str, loc, tok):
         source_table, _, dest_table, alias = tok
-        schemar.define_relationship(source_table, dest_table, Relation.HAS_ONE, alias)
+        define_relationship(source_table, dest_table, Relation.HAS_ONE, alias)
 
     def define_has_many(str, loc, tok):
         source_table, _, dest_table, alias = tok
-        schemar.define_relationship(source_table, dest_table, Relation.HAS_MANY, alias)
+        define_relationship(source_table, dest_table, Relation.HAS_MANY, alias)
 
     def handle_define_table(str, loc, tok):
         _, name = tok
@@ -20,7 +30,10 @@ def main():
         get_table_columns(*table_list)
 
     def handle_commit(str, loc, tok):
-        print(schemar.commit())
+        generated_schema = schemar.commit()
+        f = open(args.output_file, 'w')
+        f.write(generated_schema)
+        f.close()
 
     def_grammar.setParseAction(handle_define_table)
     has_one_grammar.setParseAction(define_has_one)
