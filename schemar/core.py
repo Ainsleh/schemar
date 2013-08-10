@@ -2,14 +2,11 @@ from pyparsing import ParseException
 from schemar.models import Relation
 from schemar.grammar import *
 from schemar.schemar import Schemar
+from textwrap import dedent
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description='A CLI Tool to generate SQL schemas quickly')
-    parser.add_argument('output_file', metavar='filename',
-                   help='The file to which the generated SQL schema will be written')
-    args = parser.parse_args()
-
+    args = parse_arguments()
     schemar = Schemar()
 
     def define_relationship(source_table, dest_table, type, alias):
@@ -40,9 +37,10 @@ def main():
     has_many_grammar.setParseAction(define_has_many)
     commit_grammar.setParseAction(handle_commit)
 
+    print_welcome_message()
     while True:
         try:
-            input_str = input(': ')
+            input_str = input('Enter Command: ')
             if input_str == "exit":
                 break
             else:
@@ -50,13 +48,33 @@ def main():
         except ParseException:
             print("Unrecognised command. Try again.")
 
+def print_welcome_message():
+    welcome_message = """
+    Welcome to Schemar!
+
+    The following commands are available:
+    Define table: def `table_name`
+    Define has one relationship: `source_table` has one `destination_table`
+    Define has many relationship: `source table` has many `destination_table` (E.G author has many book)
+
+    Tables which do not exist are automatically created when you define a relationship
+    """
+
+    print(dedent(welcome_message))
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='A CLI Tool to generate SQL schemas quickly')
+    parser.add_argument('output_file', metavar='filename',
+                   help='The file to which the generated SQL schema will be written')
+    return parser.parse_args()
+
 
 def get_table_columns(*tables):
     for table in tables:
         print("Defining attributes for table: {0}".format(table.name))
         while True:
             try:
-                input_str = input("\t-> ")
+                input_str = input("\tField -> ")
                 if input_str == "":
                     break
                 else:
