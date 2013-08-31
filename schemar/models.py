@@ -20,34 +20,35 @@ class Table:
     def add_primary_key(self, col_name):
         self.primary_keys.add(col_name)
 
+    def add_relation_attribute(self, field_name, table, unique=False):
+        self.relation_attributes[field_name] = Column(field_name, AttributeAlias("int"), unique)
+        self.foreign_keys[field_name] = table
+
     def has_relation_with(self, dest_table, type):
         return dest_table in self.relations and self.relations[dest_table].type == type
 
     def get_relations(self):
         return self.relations.values()
 
+    def clear_relation_attributes(self):
+        self.relation_attributes = {}
+        self.foreign_keys = {}
+
     def create_relation_attributes(self):
         for relation in self.get_relations():
             dest_table = relation.dest_table
+
             if relation.type == Relation.HAS_ONE:
+                #Unique iff One-To-One relation
+                unique = dest_table is not self and dest_table.has_relation_with(self, Relation.HAS_ONE)
+
                 field_name = "{0}_id".format(relation.alias)
-
-                self.relation_attributes[field_name] = Column(field_name, AttributeAlias("int"))
-                self.foreign_keys[field_name] = dest_table
-
-                if dest_table is not self and dest_table.has_relation_with(self, Relation.HAS_ONE):
-                    #One-To-One Relation
-                    self.relation_attributes[field_name].unique = True
+                self.add_relation_attribute(field_name, dest_table, unique)
             else:
                 if not dest_table.has_relation_with(self, Relation.HAS_MANY):
                     #Has-Many Relation
                     field_name = "{0}_id".format(self.name)
-                    dest_table.relation_attributes[field_name] = Column(field_name, AttributeAlias("int"))
-                    dest_table.foreign_keys[field_name] = self
-
-    def clear_relation_attributes(self):
-        self.relation_attributes = {}
-        self.foreign_keys = {}
+                    dest_table.add_relation_attribute(field_name, self)
 
     def generate_junction_tables(self):
         junction_tables = OrderedDict()
@@ -65,6 +66,8 @@ class Table:
                 junction_table = Table(table_name)
                 junction_table.add_relation(Relation.HAS_ONE, self)
                 junction_table.add_relation(Relation.HAS_ONE, dest_table)
+
+
 
                 junction_tables[table_name] = junction_table
 
