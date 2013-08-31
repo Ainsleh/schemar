@@ -32,10 +32,14 @@ def main():
         f.write(generated_schema)
         f.close()
 
+    def handle_peek(str, loc, tok):
+        print(schemar.commit())
+
     def_grammar.setParseAction(handle_define_table)
     has_one_grammar.setParseAction(define_has_one)
     has_many_grammar.setParseAction(define_has_many)
     commit_grammar.setParseAction(handle_commit)
+    peek_grammar.setParseAction(handle_peek)
 
     print_welcome_message()
     while True:

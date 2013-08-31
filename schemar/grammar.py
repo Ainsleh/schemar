@@ -7,7 +7,8 @@ def_grammar = oneOf("define def", caseless=True) + identifier
 has_one_grammar = identifier + "has one" + identifier + Optional(identifier, None)
 has_many_grammar = identifier + "has many" + identifier + Optional(identifier, None)
 commit_grammar = "commit" + Optional(identifier, None)
-command_grammar = def_grammar | has_one_grammar | has_many_grammar | commit_grammar
+peek_grammar = "peek" + Optional(identifier, None)
+command_grammar = def_grammar | has_one_grammar | has_many_grammar | commit_grammar | peek_grammar
 
 attr_alias = Word(alphas).setParseAction(lambda a: AttributeAlias(a[0]))
 attr_literal = QuotedString('"', escChar='\\', multiline=False)
