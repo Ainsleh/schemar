@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+
 class Table:
     def __init__(self, name):
         self.name = name
@@ -64,10 +65,12 @@ class Table:
 
                 table_name = "{0}_{1}_link".format(*linked_tables)
                 junction_table = Table(table_name)
+
                 junction_table.add_relation(Relation.HAS_ONE, self)
+                junction_table.add_primary_key("{}_id".format(self.name))
+
                 junction_table.add_relation(Relation.HAS_ONE, dest_table)
-
-
+                junction_table.add_primary_key("{}_id".format(dest_table.name))
 
                 junction_tables[table_name] = junction_table
 

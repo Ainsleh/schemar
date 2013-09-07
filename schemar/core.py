@@ -4,6 +4,25 @@ from schemar.grammar import *
 from schemar.schemar import Schemar
 from textwrap import dedent
 import argparse
+import readline
+from termcolor import colored
+
+
+OVERWRITE_WARNING = colored("Warning: You will be overwriting an already defined table", "red", attrs=["bold"])
+WELCOME_MESSAGE = """
+    Welcome to Schemar!
+
+    The following commands are available:
+    Define table:
+        def `table_name`
+    Define has one relationship:
+        `source_table` has one `destination_table`
+    Define has many relationship:
+        `source table` has many `destination_table`
+
+    Tables which do not exist are automatically created when you define a relationship
+    """
+
 
 def main():
     args = parse_arguments()
@@ -23,7 +42,11 @@ def main():
 
     def handle_define_table(str, loc, tok):
         _, name = tok
-        table_list = schemar.define_table(name)
+
+        if schemar.contains_table(name):
+            print("\n" + OVERWRITE_WARNING + "\n")
+
+        table_list = schemar.define_table(name, overwrite=True)
         get_table_columns(*table_list)
 
     def handle_commit(str, loc, tok):
@@ -52,24 +75,17 @@ def main():
         except ParseException:
             print("Unrecognised command. Try again.")
 
+
 def print_welcome_message():
-    welcome_message = """
-    Welcome to Schemar!
+    welcome_message = colored(dedent(WELCOME_MESSAGE).strip(), "green")
+    print(welcome_message)
+    print()
 
-    The following commands are available:
-    Define table: def `table_name`
-    Define has one relationship: `source_table` has one `destination_table`
-    Define has many relationship: `source table` has many `destination_table` (E.G author has many book)
-
-    Tables which do not exist are automatically created when you define a relationship
-    """
-
-    print(dedent(welcome_message))
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='A CLI Tool to generate SQL schemas quickly')
     parser.add_argument('output_file', metavar='filename',
-                   help='The file to which the generated SQL schema will be written')
+                        help='The file to which the generated SQL schema will be written')
     return parser.parse_args()
 
 

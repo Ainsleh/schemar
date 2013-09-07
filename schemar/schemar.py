@@ -6,7 +6,6 @@ from pyparsing import ParseException
 
 
 class Schemar:
-
     def __init__(self):
         self.schema = OrderedDict()
 
@@ -20,6 +19,9 @@ class Schemar:
             self.schema[table.name] = table
 
         return table_list
+
+    def contains_table(self, table_name):
+        return table_name in self.schema
 
     def define_relationship(self, source_table, dest_table, type, alias=None):
         self.schema[source_table].add_relation(type, self.schema[dest_table], alias)
