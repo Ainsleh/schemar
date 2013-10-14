@@ -1,11 +1,14 @@
+import argparse
+import readline
+
 from pyparsing import ParseException
+from textwrap import dedent
+from termcolor import colored
+
 from schemar.models import Relation
 from schemar.grammar import *
 from schemar.schemar import Schemar
-from textwrap import dedent
-import argparse
-import readline
-from termcolor import colored
+from schemar.generators import generators
 
 
 OVERWRITE_WARNING = colored("Warning: You will be overwriting an already defined table", "red", attrs=["bold"])
@@ -50,7 +53,14 @@ def main():
         get_table_columns(*table_list)
 
     def handle_commit(str, loc, tok):
-        generated_schema = schemar.commit()
+        _, generator_name = tok
+
+        if generator_name in generators:
+            generator = generators[generator_name]
+        else:
+            generator = generators['mysql']
+
+        generated_schema = schemar.commit(generator)
         f = open(args.output_file, 'w')
         f.write(generated_schema)
         f.close()

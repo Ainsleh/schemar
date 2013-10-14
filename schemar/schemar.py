@@ -1,6 +1,5 @@
 from schemar.grammar import *
 from schemar.models import (Table, Relation, AttributeAlias)
-from schemar.generators.mysql import MysqlGenerator
 from collections import OrderedDict
 from pyparsing import ParseException
 
@@ -26,8 +25,7 @@ class Schemar:
     def define_relationship(self, source_table, dest_table, type, alias=None):
         self.schema[source_table].add_relation(type, self.schema[dest_table], alias)
 
-    def commit(self):
-        generator = MysqlGenerator()
+    def commit(self, generator):
         schema_output = []
         constraint_output = []
         tables = self.schema.copy()
