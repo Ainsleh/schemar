@@ -1,7 +1,7 @@
-from schemar.generators.base import BaseGenerator
+from schemar.generators.base import BaseSQLGenerator
 
 
-class MysqlGenerator(BaseGenerator):
+class MysqlGenerator(BaseSQLGenerator):
     attribute_aliases = {
         "auto": "int(11) AUTO_INCREMENT",
         "int": "int(11)",

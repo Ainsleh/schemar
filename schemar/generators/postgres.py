@@ -1,7 +1,7 @@
-from schemar.generators.base import BaseGenerator
+from schemar.generators.base import BaseSQLGenerator
 
 
-class PostgresGenerator(BaseGenerator):
+class PostgresGenerator(BaseSQLGenerator):
     attribute_aliases = {
         "auto": "serial",
         "int": "integer",
@@ -11,6 +11,9 @@ class PostgresGenerator(BaseGenerator):
         "timestamp": "timestamp",
         "date": "date"
     }
+
+    def field_quote(self, field_name):
+        return field_name
 
     def table_create_suffix(self):
         return ""

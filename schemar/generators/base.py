@@ -1,11 +1,11 @@
 from schemar.models import AttributeAlias
 
 
-class BaseGenerator:
+class BaseSQLGenerator:
     constraint_tpl = (
-        "ALTER TABLE {source_table} ADD CONSTRAINT `{source_table}_fk_{fk_count}` "
-        "FOREIGN KEY ({field}) REFERENCES `{target_table}` (`id`) "
-        "ON DELETE CASCADE ON UPDATE CASCADE;"
+        """ALTER TABLE {source_table} ADD CONSTRAINT {constraint_name}
+        FOREIGN KEY ({field}) REFERENCES {target_table} ({references_field})
+        ON DELETE CASCADE ON UPDATE CASCADE;"""
     )
 
     attribute_aliases = {
@@ -31,12 +31,12 @@ class BaseGenerator:
 
         attributes = table.columns.copy()
         attributes.update(table.relation_attributes)
-        table_output.append("CREATE TABLE `{0}` (".format(table.name))
+        table_output.append("CREATE TABLE {0} (".format(self.field_quote(table.name)))
 
         #Write columns
         for col_name, column in attributes.items():
-            col_output.append("\t `{0}` {1}{2}".format(
-                column.name,
+            col_output.append("\t {0} {1}{2}".format(
+                self.field_quote(column.name),
                 self.resolve_attribute(column.data_type),
                 " UNIQUE" if column.unique else ""
             ))
@@ -53,12 +53,15 @@ class BaseGenerator:
         #Generate foreign key constraints
         fk_count = 0
         for field_name, target_table in table.foreign_keys.items():
+            constraint_name = "{0}_fk_{1}".format(table.name, fk_count)
             table_constraints.append(
                 self.constraint_tpl.format(
                     source_table=table.name,
                     fk_count=fk_count,
                     field=field_name,
-                    target_table=target_table.name
+                    constraint_name=self.field_quote(constraint_name),
+                    references_field=self.field_quote("id"),
+                    target_table=self.field_quote(target_table.name)
                 )
             )
             fk_count += 1

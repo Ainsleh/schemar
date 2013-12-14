@@ -3,3 +3,6 @@ env/*
 *.pyc
 .DS_Store
 .Python
+build/*
+Schemar.egg-info/*
+dist*
